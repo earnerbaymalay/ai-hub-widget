@@ -1,0 +1,15 @@
+# Old versions (kept locally for reference, not tracked)
+ai_widget_v4.py
+launch_v4.bat
+launch_v4.ps1
+AI-Widget-WPF.ps1
+launch-wpf.bat
+archive/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Config (user-specific, generated at runtime)
+~/.ai-hub-v5-config.json
