@@ -702,13 +702,28 @@ class AIHub:
                 ram    = int(((total - free) / total) * 100)
                 boot   = datetime.strptime(
                     os_obj.LastBootUpTime.split(".")[0], "%Y%m%d%H%M%S")
-                up     = datetime.now() - boot
-                upstr  = f"⏱ {up.days}d {up.seconds // 3600}h {(up.seconds // 60) % 60}m"
+                up_td  = datetime.now() - boot
+                upstr  = f"⏱ {up_td.days}d {up_td.seconds // 3600}h {(up_td.seconds // 60) % 60}m"
 
                 for d in c.Win32_LogicalDisk(DriveType=3):
                     try:
                         pct = int(((int(d.Size) - int(d.FreeSpace)) / int(d.Size)) * 100)
                         drives.append((d.DeviceID, pct))
+                    except Exception:
+                        pass
+
+            elif HAS_PSUTIL:
+                # psutil fallback when WMI is unavailable
+                cpu = int(psutil.cpu_percent(interval=0.1))
+                vm  = psutil.virtual_memory()
+                ram = int(vm.percent)
+                boot_ts = datetime.fromtimestamp(psutil.boot_time())
+                up_td   = datetime.now() - boot_ts
+                upstr   = f"⏱ {up_td.days}d {up_td.seconds // 3600}h {(up_td.seconds // 60) % 60}m"
+                for part in psutil.disk_partitions():
+                    try:
+                        usage = psutil.disk_usage(part.mountpoint)
+                        drives.append((part.device[:2], int(usage.percent)))
                     except Exception:
                         pass
 
@@ -720,10 +735,10 @@ class AIHub:
                 if self._net_prev and self._net_time:
                     dt = now - self._net_time
                     if dt > 0:
-                        dn = (counters.bytes_recv - self._net_prev.bytes_recv) / dt / 1024
-                        up = (counters.bytes_sent - self._net_prev.bytes_sent) / dt / 1024
-                        dn_str = f"{dn:.1f} MB/s" if dn >= 1024 else f"{dn:.1f} KB/s"
-                        up_str = f"{up:.1f} MB/s" if up >= 1024 else f"{up:.1f} KB/s"
+                        dn_kb = (counters.bytes_recv - self._net_prev.bytes_recv) / dt / 1024
+                        up_kb = (counters.bytes_sent - self._net_prev.bytes_sent) / dt / 1024
+                        dn_str = f"{dn_kb/1024:.1f} MB/s" if dn_kb >= 1024 else f"{dn_kb:.1f} KB/s"
+                        up_str = f"{up_kb/1024:.1f} MB/s" if up_kb >= 1024 else f"{up_kb:.1f} KB/s"
                 self._net_prev = counters
                 self._net_time = now
 
