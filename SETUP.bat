@@ -14,8 +14,8 @@ echo.
 cd /d "%~dp0"
 
 :: Verify v5 widget is present
-if not exist "ai_widget_v5.py" (
-    echo [ERROR] ai_widget_v5.py not found in current directory!
+if not exist "ai_hub.py" (
+    echo [ERROR] ai_hub.py not found in current directory!
     echo [INFO]  Run this from the AI-Widget folder.
     pause
     exit /b 1
@@ -68,7 +68,7 @@ echo    Setup Complete!
 echo ========================================
 echo.
 echo  Launch now:     Double-click 'AI Hub' on Desktop
-echo  Or run:         python ai_widget_v5.py
+echo  Or run:         python ai_hub.py
 echo.
 echo  To disable autostart, delete:
 echo  %STARTUP%\ai-hub-autostart.vbs

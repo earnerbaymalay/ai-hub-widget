@@ -1,3 +1,4 @@
 @echo off
-cd /d "C:\Users\pat21\AI-Widget"
-start /B pythonw ai_widget_v5.py
+:: AI Hub v5 — path-independent launcher
+cd /d "%~dp0"
+start /B pythonw ai_hub.py
